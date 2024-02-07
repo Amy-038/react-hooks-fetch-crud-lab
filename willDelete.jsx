@@ -1,6 +1,37 @@
+import React, { useState, useEffect } from "react";
+import AdminNavBar from "./AdminNavBar";
+import QuestionForm from "./QuestionForm";
+import QuestionList from "./QuestionList";
+
+function App() {
+  const [page, setPage] = useState("List");
+  const [questions, setQuestions] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:4000/questions")
+      .then(response => response.json())
+      .then(questions => setQuestions(questions))
+  }, []);
+
+  function handleNewQuestionSubmit(newQuestion){
+    const newList = [...questions, newQuestion]
+    console.log(newList)
+    //setQuestions(newList)
+  }
+
+  return (
+    <main>
+      <AdminNavBar onChangePage={setPage} />
+      {page === "Form" ? <QuestionForm onQuestionFormSubmit={handleNewQuestionSubmit} /> : <QuestionList questions={questions} />}
+    </main>
+  );
+}
+
+export default App;
+
 import React, { useState } from "react";
 
-function QuestionForm(props) {
+function QuestionForm({ onQuestionFormSubmit }) {
   const [formData, setFormData] = useState({
     prompt: "",
     answer1: "",
@@ -19,8 +50,7 @@ function QuestionForm(props) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(formData)
-    fetch("http://localhost:4000/questions", {
+    /*fetch("http://localhost:4000/questions", {
       method: "POST",
       headers: {
         "Content-Type" : "application/json",
@@ -28,7 +58,7 @@ function QuestionForm(props) {
       body: JSON.stringify(formData)
     })
       .then(response => response.json())
-      .then(newQuestion => props.onQuestionFormSubmit(newQuestion))
+      .then(newQuestion => onQuestionFormSubmit(newQuestion))*/
   }
 
   return (
